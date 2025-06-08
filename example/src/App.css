@@ -371,7 +371,6 @@ body {
   background-color: var(--background-default);
   border-radius: var(--border-radius-large);
   padding: 40px;
-  margin-bottom: 40px;
   box-shadow: var(--shadow-1);
   transition: background-color var(--transition-duration) var(--transition-timing),
     box-shadow var(--transition-duration) var(--transition-timing);
