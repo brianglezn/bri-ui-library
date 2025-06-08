@@ -24,9 +24,6 @@ jobs:
 
       - name: 📥 Install dependencies for library
         run: pnpm install
-        
-      - name: ⚠️ Ensure tslib is installed
-        run: pnpm add tslib
 
       - name: 🏗️ Build library
         run: pnpm run build
