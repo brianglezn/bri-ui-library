@@ -1,15 +1,19 @@
 .button {
+  display: inline-block;
   border: none;
   border-radius: 4px;
   cursor: pointer;
   font-family: 'Arial', sans-serif;
   font-weight: 600;
   transition: all 0.3s ease;
+  text-align: center;
 }
 
 .button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+  background-color: #f1f1f1 !important;
+  color: #999 !important;
 }
 
 /* Variantes */
@@ -56,4 +60,46 @@
 .large {
   padding: 10px 20px;
   font-size: 16px;
+}
+
+/* Icon styles */
+.hasIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon {
+  display: inline-flex;
+  font-size: 1.2em;
+}
+
+/* Icon position */
+.icon-left .icon {
+  margin-right: 0.5rem;
+}
+
+.icon-right .icon {
+  margin-left: 0.5rem;
+}
+
+/* Icon only buttons */
+.iconOnly {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  aspect-ratio: 1/1;
+}
+
+.small.iconOnly {
+  padding: 4px;
+}
+
+.medium.iconOnly {
+  padding: 6px;
+}
+
+.large.iconOnly {
+  padding: 8px;
 }

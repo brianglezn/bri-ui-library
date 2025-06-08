@@ -1,16 +1,35 @@
 import { useState, useEffect } from 'react';
-import { Button } from '@brianglezn/bri-ui';
 import './App.css';
+import HomePage from './pages/HomePage';
+import ButtonPage from './pages/ButtonPage';
 
 export default function App() {
-    const [darkMode, setDarkMode] = useState(false);
+    const [darkMode, setDarkMode] = useState(() => {
+        // Check if user has a preference in localStorage or prefers dark mode
+        const savedMode = localStorage.getItem('darkMode');
+        return savedMode ? JSON.parse(savedMode) : window.matchMedia('(prefers-color-scheme: dark)').matches;
+    });
     const [searchQuery, setSearchQuery] = useState('');
-    const [activeComponent, setActiveComponent] = useState('button');
+    const [activeComponent, setActiveComponent] = useState('home');
     const [sidebarOpen, setSidebarOpen] = useState(false);
+
+    useEffect(() => {
+        // Apply dark mode on initial load
+        if (darkMode) {
+            document.body.classList.add('dark-theme');
+        } else {
+            document.body.classList.remove('dark-theme');
+        }
+    }, []);
 
     const toggleDarkMode = () => {
         setDarkMode(!darkMode);
-        document.body.classList.toggle('dark-theme');
+        if (!darkMode) {
+            document.body.classList.add('dark-theme');
+        } else {
+            document.body.classList.remove('dark-theme');
+        }
+        localStorage.setItem('darkMode', JSON.stringify(!darkMode));
     };
 
     const toggleSidebar = () => {
@@ -58,89 +77,36 @@ export default function App() {
     // Define component categories and their components
     const componentCategories = [
         {
+            name: 'General',
+            components: [
+                { id: 'home', label: 'Home', icon: '🏠' }
+            ]
+        },
+        {
             name: 'Inputs',
-            components: ['Button', 'Input', 'Dropdown']
-        },
-        {
-            name: 'Feedback',
-            components: ['Alert', 'Modal']
-        },
-        {
-            name: 'Surfaces',
-            components: ['Card']
-        },
-        {
-            name: 'Navigation',
-            components: ['TabMenu']
+            components: [
+                { id: 'button', label: 'Button', icon: '🔘' }
+            ]
         }
     ];
 
-    // Render the appropriate component demo based on activeComponent
-    const renderComponentDemo = () => {
+    // Filter components based on search query
+    const filteredCategories = searchQuery.trim() === '' 
+        ? componentCategories 
+        : componentCategories.map(category => ({
+            ...category,
+            components: category.components.filter(comp => 
+                comp.label.toLowerCase().includes(searchQuery.toLowerCase())
+            )
+        })).filter(category => category.components.length > 0);
+
+    // Render the appropriate component page based on activeComponent
+    const renderComponentPage = () => {
         switch(activeComponent.toLowerCase()) {
+            case 'home':
+                return <HomePage />;
             case 'button':
-                return (
-                    <section className="component-section">
-                        <h2>Button</h2>
-                        <p className="component-description">
-                            Buttons allow users to take actions, and make choices, with a single tap.
-                            They're typically placed throughout your UI, in places like dialogs, forms, cards, and toolbars.
-                        </p>
-
-                        <div className="component-container">
-                            <h3>Variants</h3>
-                            <div className="component-row">
-                                <Button variant="primary">Primary Button</Button>
-                                <Button variant="secondary">Secondary Button</Button>
-                                <Button variant="tertiary">Tertiary Button</Button>
-                            </div>
-                            
-                            <div className="code-container">
-                                <div className="code-header">
-                                    <span className="code-header-title">JSX</span>
-                                </div>
-                                <pre className="code-content">
-{`<Button variant="primary">Primary Button</Button>
-<Button variant="secondary">Secondary Button</Button>
-<Button variant="tertiary">Tertiary Button</Button>`}
-                                </pre>
-                            </div>
-
-                            <h3>Sizes</h3>
-                            <div className="component-row">
-                                <Button size="small">Small Button</Button>
-                                <Button size="medium">Medium Button</Button>
-                                <Button size="large">Large Button</Button>
-                            </div>
-                            
-                            <div className="code-container">
-                                <div className="code-header">
-                                    <span className="code-header-title">JSX</span>
-                                </div>
-                                <pre className="code-content">
-{`<Button size="small">Small Button</Button>
-<Button size="medium">Medium Button</Button>
-<Button size="large">Large Button</Button>`}
-                                </pre>
-                            </div>
-
-                            <h3>Disabled</h3>
-                            <div className="component-row">
-                                <Button disabled>Disabled Button</Button>
-                            </div>
-                            
-                            <div className="code-container">
-                                <div className="code-header">
-                                    <span className="code-header-title">JSX</span>
-                                </div>
-                                <pre className="code-content">
-{`<Button disabled>Disabled Button</Button>`}
-                                </pre>
-                            </div>
-                        </div>
-                    </section>
-                );
-            // Add other component cases as needed
+                return <ButtonPage />;
             default:
                 return (
                     <section className="component-section">
@@ -152,7 +118,7 @@ export default function App() {
     };
 
     return (
-        <div className={`app ${darkMode ? 'dark-theme' : ''}`}>
+        <div className="app">
             <header className="header">
                 <div className="header-left">
                     <button 
@@ -180,7 +146,7 @@ export default function App() {
                         onClick={toggleDarkMode}
                         aria-label={darkMode ? "Switch to light theme" : "Switch to dark theme"}
                     >
-                        {darkMode ? '🌞' : '🌙'}
+                        {darkMode ? '☀️' : '🌙'}
                     </button>
                 </div>
             </header>
@@ -188,22 +154,23 @@ export default function App() {
             <div className="main-container">
                 <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
                     <nav className="sidebar-nav">
-                        {componentCategories.map((category) => (
+                        {filteredCategories.map((category) => (
                             <div key={category.name} className="sidebar-category-container">
                                 <h3 className="sidebar-category">{category.name}</h3>
                                 <ul className="sidebar-items">
                                     {category.components.map((component) => (
                                         <li 
-                                            key={component} 
-                                            className={`sidebar-item ${activeComponent.toLowerCase() === component.toLowerCase() ? 'active' : ''}`}
+                                            key={component.id} 
+                                            className={`sidebar-item ${activeComponent === component.id ? 'active' : ''}`}
                                             onClick={() => {
-                                                setActiveComponent(component.toLowerCase());
+                                                setActiveComponent(component.id);
                                                 if (window.innerWidth < 960) {
                                                     setSidebarOpen(false);
                                                 }
                                             }}
                                         >
-                                            {component}
+                                            <span className="sidebar-item-icon">{component.icon}</span>
+                                            {component.label}
                                         </li>
                                     ))}
                                 </ul>
@@ -221,7 +188,7 @@ export default function App() {
                 )}
 
                 <main className="content">
-                    {renderComponentDemo()}
+                    {renderComponentPage()}
                 </main>
             </div>
         </div>

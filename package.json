@@ -9,6 +9,7 @@
     "dist"
   ],
   "scripts": {
+    "dev": "npm run build && cd example && pnpm run dev",
     "build": "rollup -c",
     "test": "jest",
     "test:watch": "jest --watch"
