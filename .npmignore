@@ -1,0 +1,34 @@
+# Archivos de desarrollo
+src/
+example/
+.git/
+.github/
+.vscode/
+coverage/
+node_modules/
+
+# Archivos de configuración
+.gitignore
+.editorconfig
+.prettierrc
+.eslintrc
+jest.config.js
+setupTests.js
+rollup.config.js
+tsconfig.json
+
+# Archivos de test
+*.test.tsx
+*.test.ts
+*.spec.tsx
+*.spec.ts
+__tests__/
+__mocks__/
+
+# Archivos diversos
+*.log
+*.lock
+.DS_Store
+.env*
+TODO.md
+CHANGELOG.md 
