@@ -12,6 +12,7 @@ export default function App() {
     const [searchQuery, setSearchQuery] = useState('');
     const [activeComponent, setActiveComponent] = useState('home');
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [fadeIn, setFadeIn] = useState(true);
 
     useEffect(() => {
         // Apply dark mode on initial load
@@ -21,6 +22,23 @@ export default function App() {
             document.body.classList.remove('dark-theme');
         }
     }, []);
+
+    // Handle component transitions
+    const handleComponentChange = (componentId: string) => {
+        // Only trigger animation if changing to a different component
+        if (componentId !== activeComponent) {
+            setFadeIn(false);
+            setTimeout(() => {
+                setActiveComponent(componentId);
+                setFadeIn(true);
+            }, 150);
+        }
+        
+        // Close sidebar on mobile
+        if (window.innerWidth < 960) {
+            setSidebarOpen(false);
+        }
+    };
 
     const toggleDarkMode = () => {
         setDarkMode(!darkMode);
@@ -77,15 +95,15 @@ export default function App() {
     // Define component categories and their components
     const componentCategories = [
         {
-            name: 'General',
+            name: '',
             components: [
-                { id: 'home', label: 'Home', icon: '🏠' }
+                { id: 'home', label: 'Home', icon: 'home' }
             ]
         },
         {
             name: 'Inputs',
             components: [
-                { id: 'button', label: 'Button', icon: '🔘' }
+                { id: 'button', label: 'Button', icon: 'radio_button_checked' }
             ]
         }
     ];
@@ -104,12 +122,12 @@ export default function App() {
     const renderComponentPage = () => {
         switch(activeComponent.toLowerCase()) {
             case 'home':
-                return <HomePage />;
+                return <HomePage key="home" />;
             case 'button':
-                return <ButtonPage />;
+                return <ButtonPage key="button" />;
             default:
                 return (
-                    <section className="component-section">
+                    <section key="not-found" className="component-section">
                         <h2>Component Not Found</h2>
                         <p>The selected component is not available yet.</p>
                     </section>
@@ -126,13 +144,14 @@ export default function App() {
                         onClick={toggleSidebar}
                         aria-label="Toggle navigation menu"
                     >
-                        ☰
+                        <span className="material-symbols-rounded">menu</span>
                     </button>
                     <h1>BRI UI</h1>
                     <span className="version">v1.0.0</span>
                 </div>
                 <div className="header-right">
                     <div className="search-container">
+                        <span className="material-symbols-rounded">search</span>
                         <input 
                             type="text" 
                             placeholder="Search components..." 
@@ -146,7 +165,9 @@ export default function App() {
                         onClick={toggleDarkMode}
                         aria-label={darkMode ? "Switch to light theme" : "Switch to dark theme"}
                     >
-                        {darkMode ? '☀️' : '🌙'}
+                        <span className="material-symbols-rounded">
+                            {darkMode ? 'light_mode' : 'dark_mode'}
+                        </span>
                     </button>
                 </div>
             </header>
@@ -162,15 +183,10 @@ export default function App() {
                                         <li 
                                             key={component.id} 
                                             className={`sidebar-item ${activeComponent === component.id ? 'active' : ''}`}
-                                            onClick={() => {
-                                                setActiveComponent(component.id);
-                                                if (window.innerWidth < 960) {
-                                                    setSidebarOpen(false);
-                                                }
-                                            }}
+                                            onClick={() => handleComponentChange(component.id)}
                                         >
-                                            <span className="sidebar-item-icon">{component.icon}</span>
-                                            {component.label}
+                                            <span className="material-symbols-rounded sidebar-item-icon">{component.icon}</span>
+                                            <p>{component.label}</p>
                                         </li>
                                     ))}
                                 </ul>
@@ -187,7 +203,7 @@ export default function App() {
                     />
                 )}
 
-                <main className="content">
+                <main className={`content ${fadeIn ? 'fade-in' : 'fade-out'}`}>
                     {renderComponentPage()}
                 </main>
             </div>

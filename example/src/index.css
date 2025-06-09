@@ -5,9 +5,6 @@
   line-height: 1.5;
   font-weight: 400;
   
-  /* Remove color-scheme as we'll handle dark mode ourselves */
-  /* color-scheme: light dark; */
-  
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -67,11 +64,3 @@ img, svg {
 button, input, select, textarea {
   font: inherit;
 }
-
-/* Remove default media query as we handle dark mode with JavaScript */
-/* @media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-} */ 
